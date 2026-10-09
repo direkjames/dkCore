@@ -7,6 +7,7 @@ import com.direk.dkcore.economy.EconomyProvider;
 import com.direk.dkcore.gui.MenuListener;
 import com.direk.dkcore.player.PlayerListener;
 import com.direk.dkcore.player.PlayerService;
+import com.direk.dkcore.startup.StartupBanner;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -31,6 +32,7 @@ public final class DkCore extends JavaPlugin {
     private Database database;
     private PlayerService players;
     private EconomyProvider economy;
+    private StartupBanner banner;
 
     public static DkCore get() {
         if (instance == null) {
@@ -41,26 +43,32 @@ public final class DkCore extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        long start = System.currentTimeMillis();
         instance = this;
         config = new ConfigFile(this, "config.yml");
+        banner = new StartupBanner(this, config.yaml().getBoolean("startup-banner", true));
 
         database = new Database(this);
+        long dbStart = System.currentTimeMillis();
         try {
             database.connect(config.yaml().getConfigurationSection("database"));
+            players = new PlayerService(database);
+            players.createTables().join();
         } catch (Exception e) {
             getLogger().log(Level.SEVERE, "Could not connect to the database. Disabling dkCore.", e);
+            banner.printFailed(database.describe(), e);
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
+        long dbMs = System.currentTimeMillis() - dbStart;
 
-        players = new PlayerService(database);
-        players.createTables().join();
         economy = new EconomyProvider(this);
 
         Bukkit.getPluginManager().registerEvents(new PlayerListener(players), this);
         Bukkit.getPluginManager().registerEvents(new MenuListener(), this);
+        Bukkit.getPluginManager().registerEvents(banner, this);
 
-        getLogger().info("dkCore enabled using " + database.dialect() + " database.");
+        banner.printStartup(database.describe(), dbMs, System.currentTimeMillis() - start);
     }
 
     @Override
@@ -72,6 +80,7 @@ public final class DkCore extends JavaPlugin {
             }
         }
         if (database != null) database.close();
+        if (banner != null) banner.printShutdown();
         instance = null;
     }
 

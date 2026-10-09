@@ -8,7 +8,7 @@ Server: **Purpur 26.3**, Java **25**. Package: `com.direk.dkcore`.
 ## Build
 
 1. Open this folder in IntelliJ IDEA. Set Project SDK and Gradle JVM to **Java 25**.
-2. `./gradlew build` → `build/libs/dkCore-1.0.0.jar` goes in the server's `plugins/` folder.
+2. `./gradlew build` → `build/libs/dkCore-1.1.1.jar` goes in the server's `plugins/` folder.
 3. `./gradlew publishToMavenLocal` → lets other dk plugins compile against dkCore.
 
 Run step 3 again every time dkCore changes and a plugin needs the new code.
@@ -25,7 +25,7 @@ repositories {
 }
 dependencies {
     compileOnly("org.purpurmc.purpur:purpur-api:26.3.build.+")
-    compileOnly("com.direk:dkcore:1.0.0")
+    compileOnly("com.direk:dkcore:1.1.1")
 }
 ```
 
@@ -58,6 +58,12 @@ Never shade dkCore into a plugin jar; it must stay `compileOnly`.
 ## Commands
 
 `/dkcore` status, `/dkcore reload` (permission `dkcore.admin`).
+
+## Startup banner
+
+On startup the console shows the dkCore logo, version, server, Java, database and startup time.
+When the server finishes loading, a "dk suite ready" summary lists every dk plugin (OK / DISABLED),
+the economy and the AFK provider. Turn it off with `startup-banner: false`.
 
 ## Config
 

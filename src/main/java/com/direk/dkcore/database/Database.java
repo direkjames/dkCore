@@ -30,6 +30,7 @@ public final class Database {
     private final DkCore core;
     private HikariDataSource source;
     private Dialect dialect;
+    private String target = "not connected"; // shown on the startup banner (never includes the password)
     private final ExecutorService executor = Executors.newSingleThreadExecutor(r -> {
         Thread t = new Thread(r, "dkCore-Database");
         t.setDaemon(true);
@@ -51,6 +52,7 @@ public final class Database {
             String url = "jdbc:mysql://" + m.getString("host", "localhost") + ":" + m.getInt("port", 3306)
                     + "/" + m.getString("database", "dksuite");
             hc.setJdbcUrl(url);
+            target = m.getString("host", "localhost") + ":" + m.getInt("port", 3306) + "/" + m.getString("database", "dksuite");
             hc.setDriverClassName("com.mysql.cj.jdbc.Driver");
             hc.setUsername(m.getString("username", "root"));
             hc.setPassword(m.getString("password", ""));
@@ -64,6 +66,7 @@ public final class Database {
             core.getDataFolder().mkdirs();
             File file = new File(core.getDataFolder(), cfg == null ? "dk-suite.db" : cfg.getString("sqlite-file", "dk-suite.db"));
             hc.setJdbcUrl("jdbc:sqlite:" + file.getAbsolutePath());
+            target = file.getName();
             hc.setDriverClassName("org.sqlite.JDBC");
             hc.setMaximumPoolSize(1);
             hc.setConnectionTestQuery("SELECT 1");
@@ -73,6 +76,12 @@ public final class Database {
 
     public Dialect dialect() {
         return dialect;
+    }
+
+    /** e.g. "SQLite (dk-suite.db)" or "MySQL (localhost:3306/dksuite)". */
+    public String describe() {
+        String type = dialect == Dialect.MYSQL ? "MySQL" : dialect == Dialect.SQLITE ? "SQLite" : "Unknown";
+        return type + " (" + target + ")";
     }
 
     /** Runs a query on the database thread and returns its result. */

@@ -21,5 +21,9 @@ database:
       useSSL: false
       characterEncoding: utf8
 
+# Show the dkCore banner in the console on startup, plus a summary of every
+# dk plugin, the economy and AFK provider once the server finishes loading.
+startup-banner: true
+
 # Print extra info to console (database timings, hook detection).
 debug: false
