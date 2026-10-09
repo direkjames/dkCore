@@ -1,0 +1,22 @@
+name: dkCore
+version: '${version}'
+main: com.direk.dkcore.DkCore
+api-version: '26.1'
+author: direk james
+description: Shared core library for the dk plugin suite.
+softdepend: [Vault]
+libraries:
+  - com.zaxxer:HikariCP:6.3.0
+  - org.xerial:sqlite-jdbc:3.50.3.0
+  - com.mysql:mysql-connector-j:9.4.0
+
+commands:
+  dkcore:
+    description: dkCore info and reload.
+    usage: /dkcore [reload]
+    permission: dkcore.admin
+
+permissions:
+  dkcore.admin:
+    description: Use /dkcore.
+    default: op

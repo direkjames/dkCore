@@ -1,0 +1,25 @@
+# ============================================
+#  dkCore - shared settings for the dk suite
+#  Author: direk james
+# ============================================
+
+# One database shared by every dk plugin.
+# Each plugin uses its own prefixed tables (dkfly_, dkbank_, ...).
+database:
+  # sqlite or mysql
+  type: sqlite
+  # Used when type is sqlite (file is created inside plugins/dkCore/)
+  sqlite-file: dk-suite.db
+  mysql:
+    host: localhost
+    port: 3306
+    database: dksuite
+    username: root
+    password: ''
+    pool-size: 8
+    properties:
+      useSSL: false
+      characterEncoding: utf8
+
+# Print extra info to console (database timings, hook detection).
+debug: false
