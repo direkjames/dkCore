@@ -8,7 +8,7 @@ import java.util.Optional;
 
 /**
  * Finds the active economy, checked fresh each time so load order never matters:
- * 1. a dk EconomyService registered with the ServicesManager (dkBank, later)
+ * 1. a dk EconomyService registered with the ServicesManager
  * 2. otherwise Vault's Economy
  * <p>
  * Author: direk james

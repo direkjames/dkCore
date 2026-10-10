@@ -5,7 +5,7 @@ import org.bukkit.OfflinePlayer;
 
 /**
  * Bridges dkCore's EconomyService to whatever Vault economy is installed
- * (dkBank today). Only loaded when Vault is present.
+ * (EssentialsX, CMI, ...). Only loaded when Vault is present.
  * Author: direk james
  */
 final class VaultEconomyService implements EconomyService {

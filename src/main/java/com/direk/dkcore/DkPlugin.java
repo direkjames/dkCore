@@ -1,5 +1,6 @@
 package com.direk.dkcore;
 
+import com.direk.dkcore.bank.BankProvider;
 import com.direk.dkcore.command.DkCommand;
 import com.direk.dkcore.config.ConfigFile;
 import com.direk.dkcore.database.Database;
@@ -83,6 +84,8 @@ public abstract class DkPlugin extends JavaPlugin {
     public Tasks tasks() { return tasks; }
     public Database database() { return core.database(); }
     public EconomyProvider economy() { return core.economy(); }
+    /** dkBank: {@code bank().get()} is empty when dkBank isn't installed. */
+    public BankProvider bank() { return core.bank(); }
 
     public void listen(Listener... listeners) {
         for (Listener l : listeners) Bukkit.getPluginManager().registerEvents(l, this);

@@ -3,9 +3,9 @@ package com.direk.dkcore.economy;
 import org.bukkit.OfflinePlayer;
 
 /**
- * The money system every dk plugin talks to.
- * Right now it is backed by Vault. When dkBank migrates to dkCore it will
- * register its own implementation through Bukkit's ServicesManager and take over.
+ * The wallet every dk plugin talks to (the money players carry), backed by Vault.
+ * Another plugin can register its own implementation through Bukkit's ServicesManager to take over.
+ * Money kept in dkBank is separate: use {@link com.direk.dkcore.bank.BankService} for that.
  * <p>
  * All methods must be called on the main thread.
  * Author: direk james

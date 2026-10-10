@@ -3,6 +3,9 @@
 //   ./gradlew build                 -> build/libs/dkCore-<version>.jar (put on the server)
 //   ./gradlew publishToMavenLocal   -> lets other dk plugins compile against
 //                                      com.direk:dkcore:<version>
+//
+// dkCore compiles against the dkBank Developer API. Publish it once first (and again when dkBank's API
+// changes) by running this in the dkBank project:   ./gradlew :api:publishToMavenLocal
 
 plugins {
     java
@@ -10,9 +13,10 @@ plugins {
 }
 
 group = "com.direk"
-version = "1.1.1"
+version = "1.2.0"
 
 repositories {
+    mavenLocal() // dkBank-API (see the top of this file)
     mavenCentral()
     maven("https://repo.purpurmc.org/snapshots")
     maven("https://repo.papermc.io/repository/maven-public/")
@@ -24,6 +28,8 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:${property("vaultVersion")}") {
         exclude(group = "org.bukkit")
     }
+    // dkBank's Developer API (MIT). dkBank provides it at runtime; never shade it.
+    compileOnly("dev.direk:dkBank-API:${property("dkbankApiVersion")}")
     // Loaded at runtime by Paper's library loader (see plugin.yml "libraries").
     compileOnly("com.zaxxer:HikariCP:${property("hikariVersion")}")
 }

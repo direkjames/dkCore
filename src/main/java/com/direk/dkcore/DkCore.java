@@ -1,6 +1,7 @@
 package com.direk.dkcore;
 
 import com.direk.dkcore.afk.AfkService;
+import com.direk.dkcore.bank.BankProvider;
 import com.direk.dkcore.config.ConfigFile;
 import com.direk.dkcore.database.Database;
 import com.direk.dkcore.economy.EconomyProvider;
@@ -32,6 +33,7 @@ public final class DkCore extends JavaPlugin {
     private Database database;
     private PlayerService players;
     private EconomyProvider economy;
+    private BankProvider bank;
     private StartupBanner banner;
 
     public static DkCore get() {
@@ -63,10 +65,13 @@ public final class DkCore extends JavaPlugin {
         long dbMs = System.currentTimeMillis() - dbStart;
 
         economy = new EconomyProvider(this);
+        bank = new BankProvider(this);
 
         Bukkit.getPluginManager().registerEvents(new PlayerListener(players), this);
         Bukkit.getPluginManager().registerEvents(new MenuListener(), this);
         Bukkit.getPluginManager().registerEvents(banner, this);
+        Bukkit.getPluginManager().registerEvents(bank, this);
+        bank.linkAfk(); // dkBank enables before dkCore; dkAFK after, which links it then
 
         banner.printStartup(database.describe(), dbMs, System.currentTimeMillis() - start);
     }
@@ -95,7 +100,8 @@ public final class DkCore extends JavaPlugin {
         }
         sender.sendMessage(mm.deserialize("<#7c5cff>dkCore</#7c5cff> <gray>v" + getPluginMeta().getVersion()
                 + " by direk james | db: <white>" + database.dialect()
-                + "</white> | economy: <white>" + economy.name() + "</white>"));
+                + "</white> | economy: <white>" + economy.name()
+                + "</white> | bank: <white>" + bank.name() + "</white>"));
         return true;
     }
 
@@ -103,6 +109,8 @@ public final class DkCore extends JavaPlugin {
     public Database database() { return database; }
     public PlayerService players() { return players; }
     public EconomyProvider economy() { return economy; }
+    /** dkBank for the whole suite: {@code bank().get()} is empty when dkBank isn't installed. */
+    public BankProvider bank() { return bank; }
     public boolean debug() { return config.yaml().getBoolean("debug", false); }
 
     /**

@@ -1,6 +1,7 @@
 package com.direk.dkcore.startup;
 
 import com.direk.dkcore.DkCore;
+import com.direk.dkcore.bank.BankProvider;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -112,10 +113,25 @@ public final class StartupBanner implements Listener {
         String eco = core.economy().name();
         if (eco.equals("none")) row("Economy", "<yellow>none found (shops and payments are off)");
         else row("Economy", "<green><v>", v(eco));
+        bankRow();
         row("AFK", core.hasAfkProvider()
                 ? "<green>provider registered"
                 : "<gray>no provider (plugins use their fallback)");
         line(LINE);
+    }
+
+    /** dkBank: running (and whether it uses dkAFK for interest), disabled, or not installed. */
+    private void bankRow() {
+        Plugin dkBank = core.bank().plugin();
+        if (dkBank == null) {
+            row("Bank", "<gray>dkBank not installed");
+        } else if (!core.bank().available()) {
+            row("Bank", "<red>dkBank installed but not running");
+        } else if (core.bank().afkLinked()) {
+            row("Bank", "<green><v></green> <dark_gray>(uses dkAFK for interest)", v(core.bank().name()));
+        } else {
+            row("Bank", "<green><v>", v(core.bank().name()));
+        }
     }
 
     /** Prints a short goodbye on shutdown. */
@@ -127,14 +143,20 @@ public final class StartupBanner implements Listener {
 
     // ---- helpers ----
 
-    /** Every plugin that depends on dkCore, in load order. */
+    /**
+     * Every dk plugin, in load order: plugins that depend on dkCore, plus dkBank, which works on its
+     * own and is linked by dkCore instead of depending on it.
+     */
     private List<Plugin> dkPlugins() {
         List<Plugin> list = new ArrayList<>();
         for (Plugin p : Bukkit.getPluginManager().getPlugins()) {
             if (p == core) continue;
             List<String> deps = p.getPluginMeta().getPluginDependencies();
             List<String> soft = p.getPluginMeta().getPluginSoftDependencies();
-            if (deps.contains(core.getName()) || soft.contains(core.getName())) list.add(p);
+            if (deps.contains(core.getName()) || soft.contains(core.getName())
+                    || p.getName().equals(BankProvider.DKBANK)) {
+                list.add(p);
+            }
         }
         return list;
     }

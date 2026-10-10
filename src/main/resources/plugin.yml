@@ -4,7 +4,8 @@ main: com.direk.dkcore.DkCore
 api-version: '26.1'
 author: direk james
 description: Shared core library for the dk plugin suite.
-softdepend: [Vault]
+# dkBank loads first so the suite can use it as soon as dkCore starts. dkBank must NOT list dkCore back.
+softdepend: [Vault, dkBank]
 libraries:
   - com.zaxxer:HikariCP:6.3.0
   - org.xerial:sqlite-jdbc:3.50.3.0
