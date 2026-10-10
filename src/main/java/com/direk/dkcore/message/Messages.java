@@ -1,6 +1,8 @@
 package com.direk.dkcore.message;
 
 import com.direk.dkcore.config.ConfigFile;
+import com.direk.dkcore.economy.EconomyService;
+import com.direk.dkcore.util.TextUtil;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -63,9 +65,20 @@ public final class Messages {
 
     // ---- placeholder shortcuts ----
 
-    /** Plain-text placeholder (player input is never parsed as tags). */
+    /**
+     * Plain-text placeholder (player input is never parsed as tags).
+     * '§' color codes are removed, so values from other plugins can't recolor our messages.
+     */
     public static TagResolver text(String key, Object value) {
-        return Placeholder.unparsed(key, String.valueOf(value));
+        return Placeholder.unparsed(key, TextUtil.stripSection(String.valueOf(value)));
+    }
+
+    /**
+     * Money placeholder: the economy's format with all of its color codes removed,
+     * so the color in the YAML file is what players see. Use this for every amount of money.
+     */
+    public static TagResolver money(String key, EconomyService economy, double amount) {
+        return Placeholder.unparsed(key, economy.formatPlain(amount));
     }
 
     /** Placeholder whose value may contain MiniMessage formatting. */

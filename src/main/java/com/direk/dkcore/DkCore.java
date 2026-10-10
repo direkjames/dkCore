@@ -71,7 +71,7 @@ public final class DkCore extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new MenuListener(), this);
         Bukkit.getPluginManager().registerEvents(banner, this);
         Bukkit.getPluginManager().registerEvents(bank, this);
-        bank.linkAfk(); // dkBank enables before dkCore; dkAFK after, which links it then
+        bank.linkAfk(); // dkBank (a softdepend) is already running; links once an AFK provider exists
 
         banner.printStartup(database.describe(), dbMs, System.currentTimeMillis() - start);
     }
@@ -109,7 +109,7 @@ public final class DkCore extends JavaPlugin {
     public Database database() { return database; }
     public PlayerService players() { return players; }
     public EconomyProvider economy() { return economy; }
-    /** dkBank for the whole suite: {@code bank().get()} is empty when dkBank isn't installed. */
+    /** dkBank: {@code bank().get()} is empty when dkBank isn't installed. */
     public BankProvider bank() { return bank; }
     public boolean debug() { return config.yaml().getBoolean("debug", false); }
 

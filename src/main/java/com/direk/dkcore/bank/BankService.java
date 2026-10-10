@@ -1,5 +1,6 @@
 package com.direk.dkcore.bank;
 
+import com.direk.dkcore.util.TextUtil;
 import org.bukkit.entity.Player;
 
 import java.util.OptionalDouble;
@@ -65,6 +66,15 @@ public interface BankService {
     /** Whether dkBank's alt-account limit locks this player's bank. Main thread. */
     boolean isLocked(Player player);
 
-    /** Formats money the way dkBank shows it, e.g. $1,234.56 */
+    /** Formats money the way dkBank shows it, e.g. $1,234.56. May contain dkBank's own colors. */
     String format(double amount);
+
+    /**
+     * Same as {@link #format(double)} but with color codes removed, so the color in our YAML
+     * files decides how it looks. Always use this to show bank money to players.
+     */
+    default String formatPlain(double amount) {
+        String text = format(amount);
+        return text == null ? String.valueOf(amount) : TextUtil.stripColors(text);
+    }
 }
